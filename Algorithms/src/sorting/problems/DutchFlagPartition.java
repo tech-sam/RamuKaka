@@ -3,6 +3,8 @@ package sorting.problems;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
 Reorder the array so that all elements less than the pivot appear first,
@@ -16,21 +18,15 @@ public class DutchFlagPartition {
     public enum Color {RED, WHITE, BLUE}
 
     public static void main(String[] args) {
-        List<Color> colors = new ArrayList<>();
-        colors.add(Color.BLUE);
+        Stream<Color> colorStream = Stream.of(Color.BLUE, Color.RED, Color.WHITE,
+                Color.RED, Color.WHITE, Color.BLUE,
+                Color.WHITE, Color.BLUE, Color.RED);
 
-        colors.add(Color.RED);
-        colors.add(Color.WHITE);
+        List<Color> colors = colorStream.collect(Collectors.toList());
 
-        colors.add(Color.RED);
-        colors.add(Color.WHITE);
-        colors.add(Color.BLUE);
-
-        colors.add(Color.WHITE);
-        colors.add(Color.BLUE);
-        colors.add(Color.RED);
-        dutchFlagPartition(Color.WHITE.ordinal(), colors);
-        System.out.println(colors);
+        // dutchFlagPartition(Color.WHITE.ordinal(), colors);
+        dutchFlagPartitionTricky(Color.WHITE.ordinal(), colors);
+        //  System.out.println(colors);
     }
 
     public static void dutchFlagPartitionOn2(int pivotIndex, List<Color> A) {
@@ -52,7 +48,7 @@ public class DutchFlagPartition {
                 }
             }
         }
-        System.out.println(A);
+        //System.out.println(A);
     }
 
 
@@ -81,13 +77,34 @@ public class DutchFlagPartition {
     }
 
 
-    /*           Keep the following invariants during partitioning: *bottom group: A.subList(SI, smaller).
-     *             middle group: A.subList (smaller , equal).
-     *             unclassified group: A.subList(equal , larger).
+    /*            Keep the following invariants during partitioning:
+     *            bottom group: A.subList(SI, smaller).
+     *            middle group: A.subList (smaller , equal).
+     *            unclassified group: A.subList(equal , larger).
      *            top group: A .subList (larger , A .size ()) .
      */
+
+
+/*    Each iteration decreases the size of unclassified by 1,
+      and the time spent within each iteration is 0(1),
+      implying the time complexity is 0(n). The space complexity is clearly 0(1).
+*/
+
     public static void dutchFlagPartitionTricky(int pivotIndex, List<Color> A) {
 
+        Color pivot = A.get(pivotIndex);
 
+        int smaller = 0, equal = 0, larger = A.size() - 1;
+
+        while (equal < larger) {
+            if (A.get(equal).ordinal() < pivot.ordinal()) {
+                Collections.swap(A, smaller++, equal++);
+            } else if (A.get(equal).ordinal() == pivot.ordinal()) {
+                equal++;
+            } else {
+                Collections.swap(A, equal, larger--);
+            }
+        }
+        System.out.println(A);
     }
 }
