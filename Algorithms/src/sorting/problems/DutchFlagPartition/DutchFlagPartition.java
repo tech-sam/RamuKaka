@@ -1,4 +1,4 @@
-package sorting.problems;
+package sorting.problems.DutchFlagPartition;
 
 import java.util.ArrayList;
 import java.util.Collections;
